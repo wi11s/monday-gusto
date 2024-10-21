@@ -1,11 +1,10 @@
-# Github Integration - Monday App Example
+# Gusto Integration - Monday App Example
 
 ## Overview
 
-This repository contains the example Monday app called "Github Integration." The app demonstrates how to implement the following recipes:
+This repository contains the example Monday app called "Gusto Integration." The app demonstrates how to implement the following recipes:
 
-1. When the **status** changes to **something**, it creates an **issue** in **this repository**.
-2. When an issue is created in **this repository**, it creates an **item**.
+1. When the **status** changes to **something**, it creates an **employee** in **Gusto account**.
 
 ## Features
 
