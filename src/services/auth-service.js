@@ -17,41 +17,6 @@ class BaseAuthManager {
   };
 }
 
-export class GithubAuthManager extends BaseAuthManager {
-  getAuthorizationUrl = (userId, state) => {
-    const client = this._getClient();
-    const redirectUri = `${getBaseUrl()}/auth/github/callback/${userId}`;
-    const authorizationUrl = client.authorizeURL({
-      redirect_uri: redirectUri,
-      scope: SCOPES,
-      state,
-    });
-
-    return authorizationUrl;
-  };
-
-  getToken = async (code) => {
-    const client = this._getClient();
-    const response = await client.getToken({ code });
-    const { access_token: token } = response.token;
-    return token;
-  };
-
-  _getClient = () => {
-    return new AuthorizationCode({
-      client: {
-        id: getSecret(CLIENT_ID),
-        secret: getSecret(CLIENT_SECRET),
-      },
-      auth: {
-        tokenHost: getSecret(TOKEN_HOST),
-        tokenPath: getSecret(TOKEN_PATH),
-        authorizePath: getSecret(AUTHORIZE_PATH),
-      },
-    });
-  };
-}
-
 export class MondayAuthManager extends BaseAuthManager {
   getAuthorizationUrl = (userId, state) => {
     const client = this._getClient();
