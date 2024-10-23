@@ -1,5 +1,4 @@
 import { ConnectionModelService } from '../services/model-services/connection-model-service.js';
-import * as githubService from '../services/github-service.js';
 import logger from '../services/logger/index.js';
 
 const TAG = 'fields_controller';

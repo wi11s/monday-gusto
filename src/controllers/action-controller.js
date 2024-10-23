@@ -12,6 +12,8 @@ export async function executeCreateAction(req, res) {
   const { accountId, userId } = req.session;
   const { inputFields } = req.body.payload;
 
+  
+
   // Gets the blocks' required data from the input fields object.
   // You can define the input fields for your block by opening your integration feature and selecting Feature Details > Workflow Blocks
   // Input fields docs: https://developer.monday.com/apps/docs/custom-actions#configure-action-input-fields
@@ -45,16 +47,17 @@ export async function executeCreateAction(req, res) {
     // Retrieve the relevant user's OAuth token from the DB
     const { gustoToken } = await connectionModelService.getConnectionByUserId(userId);
 
-    logger.info('MONDAY', TAG, { mondayToken });
-    logger.info('GUSTO', TAG, { gustoToken });
+    // logger.info('MONDAY', TAG, { mondayToken });
+    // logger.info('GUSTO', TAG, { gustoToken });
 
     const firstName = item.name.split(' ')[0];
     const lastName = item.name.split(' ')[1];
 
-    const email = item.column_values.find(column => column.id === 'text1').value
+    // TODO: get email from payload
+    // const email = 
 
     // log names and email
-    logger.info('create employee action execute', TAG, { firstName, lastName, email });
+    // logger.info('create employee action execute', TAG, { firstName, lastName });
 
     // Call the Gusto API to create an employee.
     fetch('https://api.gusto-demo.com/v1/employees', {
@@ -66,12 +69,11 @@ export async function executeCreateAction(req, res) {
       body: JSON.stringify({ 
         first_name: firstName, 
         last_name: lastName,
-        email: email }),
+      }),
     })
-    // .then(response => response.json())
-    // .then(data => {
-    //   logger.info('create employee action response', TAG, { ...loggingOptions, data });
-    // });
+    .then(res => {
+      logger.info('create employee action response', TAG, { ...loggingOptions, res });
+    });
 
     return res.status(200).send();
   } catch (err) {

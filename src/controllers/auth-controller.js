@@ -1,20 +1,22 @@
 import { MONDAY_SIGNING_SECRET, GUSTO_OAUTH_CLIENT_ID, GUSTO_OAUTH_CLIENT_SECRET } from '../constants/secret-keys.js';
 import { getSecret } from '../helpers/secret-store.js';
-import { GithubAuthManager, MondayAuthManager } from '../services/auth-service.js';
+import { MondayAuthManager } from '../services/auth-service.js';
 import logger from '../services/logger/index.js';
 import { ConnectionModelService } from '../services/model-services/connection-model-service.js';
 import jwt from 'jsonwebtoken';
+import { EnvironmentVariablesManager } from '@mondaycom/apps-sdk';
 
 const TAG = 'auth_controller';
 const mondayAuthManager = new MondayAuthManager();
 const connectionModelService = new ConnectionModelService();
+const evm = new EnvironmentVariablesManager();
+const base_url = evm.get('BASE_URL');
 
 /**
  * Begins the Gusto OAuth flow.
  */
 export const authorize = async (req, res) => {
   const { userId, backToUrl } = req.session;
-  const { token } = req.query;
 
   // Check if the user has already connected their Gusto and monday.com accounts
   const connection = await connectionModelService.getConnectionByUserId(userId);
@@ -23,7 +25,7 @@ export const authorize = async (req, res) => {
   }
 
   const client_id = getSecret(GUSTO_OAUTH_CLIENT_ID);
-  const redirect_uri = 'https://8e313d2ef5a4.apps-tunnel.monday.com/redirect'
+  const redirect_uri = `${base_url}/redirect`
   const redirect_uri_for_url = encodeURIComponent(redirect_uri);
 
   const mondayToken = jwt.sign({ userId, backToUrl }, getSecret(MONDAY_SIGNING_SECRET));
@@ -70,7 +72,7 @@ export const gustoRedirect = async (req, res) => {
       client_secret: getSecret(GUSTO_OAUTH_CLIENT_SECRET),
       code: code,
       grant_type: 'authorization_code',
-      redirect_uri: 'https://8e313d2ef5a4.apps-tunnel.monday.com/redirect'
+      redirect_uri: `${base_url}/redirect`
     }
     const gustoToken = await fetch(gustoAuthUrl, {
       method: 'POST',
